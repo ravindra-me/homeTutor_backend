@@ -4,9 +4,13 @@
  * Module dependencies.
  */
 
-var app = require("../app");
-var debug = require("debug")("hometutor-backend:server");
-var http = require("http");
+// var app = require("../app");
+// var debug = require("debug")("hometutor-backend:server");
+// var http = require("http");
+import app from "../app.js";
+import debug from "debug";
+debug.debug("matri-site:server");
+import http from "http";
 
 /**
  * Get port from environment and store in Express.
