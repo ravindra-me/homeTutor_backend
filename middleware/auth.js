@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 module.exports = {
   verifyToken: async (req, res, next) => {
     var token = req.headers.authorization;
