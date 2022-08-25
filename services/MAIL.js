@@ -12,9 +12,7 @@ const MAIL_SETTINGS = {
 };
 
 const transporter = nodemailer.createTransport(MAIL_SETTINGS);
-
 const sendMail = async (params) => {
-  const link = "http://" + req.get("host") + "/verify?id=" + params.token_id;
   try {
     let info = await transporter.sendMail({
       from: MAIL_SETTINGS.auth.user,
@@ -27,7 +25,7 @@ const sendMail = async (params) => {
       >
         <h2>Welcome to the Home tutor.</h2>
         <h4>You are officially In ✔</h4>
-        <a style="font-size: 40px; letter-spacing: 2px; text-align:center;" href=${link}>click here for verification</a>
+        <a style="font-size: 40px; letter-spacing: 2px; text-align:center;" href=${params.link}>click here for verification</a>
         <p style="margin-top:50px;">If you do not request for verification please do not respond to the mail. You can in turn un subscribe to the mailing list and we will never bother you again.</p>
       </div>
     `,

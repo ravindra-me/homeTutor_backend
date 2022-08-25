@@ -25,12 +25,13 @@ const userController = {
       }
       const createUser = await User.create(user);
       const token = await Token.create({
-        user_id: createUser._id,
+        userId: createUser._id,
         token: createToken({ userId: createUser._id }, "2m"),
       });
+      const link = req.protocol + req.get("host") + "/verify/" + token._id;
       await sendMail({
         to: createUser.email,
-        token_id: token._id,
+        link,
       });
       res.status(200).json({ email: createUser.email });
     } catch (error) {
@@ -48,12 +49,16 @@ const userController = {
       if (!user) {
         res.status(401).json({ error: "Email is not registered" });
       }
-      const result = user.verifyPassword(password);
-      if (!result) {
-        res.status(401).json({ error: "Invalid password" });
+      if (user.isActive) {
+        const result = user.verifyPassword(password);
+        if (!result) {
+          res.status(401).json({ error: "Invalid password" });
+        }
+        var token = await user.signToken();
+        res.json({ user: user.userJson(token) });
+      } else {
+        res.status(401).json({ error: "User is not verified" });
       }
-      var token = await user.signToken();
-      res.json({ user: user.userJson(token) });
     } catch (error) {
       res.status(400).send(error);
     }
