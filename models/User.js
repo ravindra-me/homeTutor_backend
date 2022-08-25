@@ -3,17 +3,38 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 var Schema = mongoose.Schema;
 
+var validateEmail = function (email) {
+  var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  return re.test(email);
+};
+
 const user = new Schema(
   {
-    email: { type: String, match: /@/, required: true, unique: true },
+    email: {
+      type: String,
+      match: /@/,
+      required: true,
+      unique: true,
+      trim: true,
+      validate: [validateEmail, "Please fill a valid email address"],
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        "Please fill a valid email address",
+      ],
+    },
     firstName: { type: String, required: true, trim: true },
     lastName: { type: String, trim: true },
     password: { type: String, min: 8, max: 15, required: true, minlength: 8 },
     image: { type: String },
     phone: { type: Number, required: true },
-    isAdmin: false,
+    isAdmin: { type: Boolean, default: false },
     address: { type: String },
     isTeacher: { type: Boolean, required: true },
+    otp: { type: String },
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -48,7 +69,9 @@ user.methods.signToken = async function () {
     userId: this._id,
   };
   try {
-    const token = jwt.sign(payload, process.env.SECRET);
+    const token = jwt.sign(payload, process.env.SECRET, {
+      expiresIn: "10m",
+    });
     return token;
   } catch (error) {
     return error;
